@@ -1,0 +1,85 @@
+﻿{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceNamePrefix": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 5,
+          "defaultValue": "NEI"
+        },
+        "adminUsername": {
+          "type": "string",
+          "metadata": {
+            "description": "This will be the name of the local system root user.  The value for this field cannot be 'root', 'admin', or 'administrator'."
+          }
+        },
+      "adminPassword": {
+        "type": "securestring",
+        "metadata": {
+          "description": "This will be the default passwrod of the local system root user.  Must be 12 characters in length, use upper and lower case characters, and at least one special character.  Most passwords derived from the word 'password' are blocked automatically and will cause the deployment to fail."
+        }
+      },
+      "proxyVMSize": {
+        "type": "string",
+        "defaultValue": "Standard_A6",
+        "allowedValues": [
+          "Standard_A1",
+          "Standard_A2",
+          "Standard_A3",
+          "Standard_A4",
+          "Standard_A5",
+          "Standard_A6",
+          "Standard_A7"
+        ],
+        "metadata": {
+          "description": "The default value deploys a Standard_A6 VM utilizing 4 x CPU cores and 28 GB of RAM.  The full list of virtual machine sizes are avaliable at the following link: https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-sizes/"
+        }
+      },
+      "proxyVMCount": {
+        "type": "int",
+        "minValue": 2,
+        "defaultValue": 2
+      }
+
+    },
+  "variables": {
+    "namePrefix": "[toLower(parameters('resourceNamePrefix')]",
+    "storageAccountName": "[concat(variables('namePrefix'),'sa', uniqueString(resourceGroup().id))]",
+    "ProxyTemplateFilePath": "NEI-Pilot-Projects/Templates/Proxy.json",
+    "ProxyTemplateParametersFilePath": "NEI-Pilot-Projects/Templates/Proxy.parameters.json"
+  },
+    "resources": [
+        {
+            "name": "[variables('storageAccountName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2015-06-15",
+            "dependsOn": [ ],
+            "properties": {
+                "accountType": "Standard_LRS"
+            }
+        },
+        {
+            "name": "Proxy",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+          "dependsOn": [
+
+          ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/', variables('ProxyTemplateFilePath'), parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/', variables('ProxyTemplateParametersFilePath'), parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        }
+    ],
+    "outputs": {
+    }
+}
