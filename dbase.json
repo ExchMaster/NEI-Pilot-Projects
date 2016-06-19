@@ -31,11 +31,11 @@
     }
   },
   "variables": {
-    "nicName": "[concat(parameters('resourceNamePrefix'),'nicp', uniqueString(resourceGroup().id))]",
-    "vmName": "[concat(parameters('resourceNamePrefix'),'vmp')]",
-    "lbName": "[concat(parameters('resourceNamePrefix'),'lbp', uniqueString(resourceGroup().id))]",
+    "nicName": "[concat(parameters('resourceNamePrefix'),'nicd', uniqueString(resourceGroup().id))]",
+    "vmName": "[concat(parameters('resourceNamePrefix'),'vmd')]",
+    "lbName": "[concat(parameters('resourceNamePrefix'),'lbd', uniqueString(resourceGroup().id))]",
     "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbName'))]",
-    "availabilitySetName": "[concat(parameters('resourceNamePrefix'),'asp', uniqueString(resourceGroup().id))]"
+    "availabilitySetName": "[concat(parameters('resourceNamePrefix'),'asd', uniqueString(resourceGroup().id))]"
   },
   "resources": [
     {
@@ -45,7 +45,7 @@
       "apiVersion": "2015-06-15",
       "copy": {
         "name": "nicNameLoop",
-        "count": "[parameters('proxyVMCount')]"
+        "count": "[parameters('dbaseVMCount')]"
       },
       "dependsOn": [
         "[concat('Microsoft.Network/loadBalancers/', variables('lbName'))]"
@@ -76,7 +76,7 @@
       "apiVersion": "2015-06-15",
       "copy": {
         "name": "vmNameLoop",
-        "count": "[parameters('proxyVMCount')]"
+        "count": "[parameters('dbaseVMCount')]"
       },
       "dependsOn": [
         "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'),copyIndex())]",
@@ -84,7 +84,7 @@
       ],
       "properties": {
         "hardwareProfile": {
-          "vmSize": "[parameters('proxyVMSize')]"
+          "vmSize": "[parameters('dbaseVMSize')]"
         },
         "osProfile": {
           "computerName": "[concat(variables('vmName'),copyIndex())]",
