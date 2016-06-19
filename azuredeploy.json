@@ -48,11 +48,25 @@
         "description": "The pre-existing subnet name within the virtual network defined by 'deploymentVNET' which will contain the web tier of this web application."
       }
     },
+    "webLBPrivateIPAddress": {
+      "type": "string",
+      "defaultValue": "10.8.0.30",
+      "metadata": {
+        "description": "This is the private IP address of the load balancer deployed in the web tier.  The IP address assigned here must be a valid IP address within the subnet identified within 'deploymentWebSubnet'."
+      }
+    },
     "deploymentDBaseSubnet": {
       "type": "string",
       "defaultValue": "Dbase",
       "metadata": {
         "description": "The pre-existing subnet name within the virtual network defined by 'deploymentVNET' which will contain the dbase tier of this web application."
+      }
+    },
+    "dbaseLBPrivateIPAddress": {
+      "type": "string",
+      "defaultValue": "10.8.0.46",
+      "metadata": {
+        "description": "This is the private IP address of the load balancer deployed in the web tier.  The IP address assigned here must be a valid IP address within the subnet identified within 'deploymentDBaseSubnet'."
       }
     },
     "proxyVMSize": {
@@ -133,59 +147,147 @@
     "webTemplateFilePath": "Web.json",
     "dbaseTemplateFilePath": "Dbase.json"
   },
-    "resources": [
-        {
-            "name": "[variables('storageAccountName')]",
-            "type": "Microsoft.Storage/storageAccounts",
-            "location": "[resourceGroup().location]",
-            "apiVersion": "2015-06-15",
-            "dependsOn": [ ],
-            "properties": {
-                "accountType": "Standard_LRS"
-            }
+  "resources": [
+    {
+      "name": "[variables('storageAccountName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [ ],
+      "properties": {
+        "accountType": "Standard_LRS"
+      }
+    },
+    {
+      "name": "Proxy",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('baseTemplateURI'), '/', variables('proxyTemplateFilePath'))]",
+          "contentVersion": "1.0.0.0"
         },
-        {
-            "name": "Proxy",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2015-01-01",
-          "dependsOn": [
-            "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
-          ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('baseTemplateURI'), '/', variables('proxyTemplateFilePath'))]",
-                    "contentVersion": "1.0.0.0"
-                },
-              "parameters": {
-                "adminUsername": {
-                  "value": "[parameters('adminUsername')]"
-                },
-                "adminPassword": {
-                  "value": "[parameters('adminPassword')]"
-                },
-                "storageAccountName": {
-                  "value": "[variables('storageAccountName')]"
-                },
-                "resourceNamePrefix": {
-                  "value": "[variables('namePrefix')]"
-                },
-                "proxyVMSize": {
-                  "value": "[parameters('proxyVMSize')]"
-                },
-                "proxyVMCount": {
-                  "value": "[parameters('proxyVMCount')]"
-                },
-                "deploymentVNETID": {
-                  "value": "[variables('vnetID')]"
-                },
-                "subnetProxyRef": {
-                  "value": "[variables('subnetProxyRef')]"
-                }
-              }
-            }
+        "parameters": {
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "storageAccountName": {
+            "value": "[variables('storageAccountName')]"
+          },
+          "resourceNamePrefix": {
+            "value": "[variables('namePrefix')]"
+          },
+          "proxyVMSize": {
+            "value": "[parameters('proxyVMSize')]"
+          },
+          "proxyVMCount": {
+            "value": "[parameters('proxyVMCount')]"
+          },
+          "deploymentVNETID": {
+            "value": "[variables('vnetID')]"
+          },
+          "subnetProxyRef": {
+            "value": "[variables('subnetProxyRef')]"
+          }
         }
-    ],
+      }
+    },
+    {
+      "name": "Web",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('baseTemplateURI'), '/', variables('webTemplateFilePath'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "storageAccountName": {
+            "value": "[variables('storageAccountName')]"
+          },
+          "resourceNamePrefix": {
+            "value": "[variables('namePrefix')]"
+          },
+          "webVMSize": {
+            "value": "[parameters('webVMSize')]"
+          },
+          "webVMCount": {
+            "value": "[parameters('webVMCount')]"
+          },
+          "deploymentVNETID": {
+            "value": "[variables('vnetID')]"
+          },
+          "subnetWebRef": {
+            "value": "[variables('subnetWebRef')]"
+          },
+          "webLBPrivateIPAddress": {
+            "value": "[parameters('webLBPrivateIPAddress')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "Dbase",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('baseTemplateURI'), '/', variables('dbaseTemplateFilePath'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "storageAccountName": {
+            "value": "[variables('storageAccountName')]"
+          },
+          "resourceNamePrefix": {
+            "value": "[variables('namePrefix')]"
+          },
+          "dbaseVMSize": {
+            "value": "[parameters('dbaseVMSize')]"
+          },
+          "dbaseVMCount": {
+            "value": "[parameters('dbaseVMCount')]"
+          },
+          "deploymentVNETID": {
+            "value": "[variables('vnetID')]"
+          },
+          "subnetDbaseRef": {
+            "value": "[variables('subnetDbaseRef')]"
+          },
+          "dbaseLBPrivateIPAddress": {
+            "value": "[parameters('dbaseLBPrivateIPAddress')]"
+          }
+        }
+      }
+    }
+  ],
     "outputs": {
     }
 }
