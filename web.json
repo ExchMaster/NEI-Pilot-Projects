@@ -143,7 +143,7 @@
             "name": "LoadBalancerFrontend",
             "properties": {
               "privateIPAllocationMethod": "Static",
-              "privateIPAddress": "[parameters('webLBPrivateIPAddress')",
+              "privateIPAddress": "[parameters('webLBPrivateIPAddress')]",
               "subnet": {
                 "id": "[parameters('subnetWebRef')]"
               }

@@ -66,7 +66,7 @@
       "type": "string",
       "defaultValue": "10.8.0.46",
       "metadata": {
-        "description": "This is the private IP address of the load balancer deployed in the web tier.  The IP address assigned here must be a valid IP address within the subnet identified within 'deploymentDBaseSubnet'."
+        "description": "This is the private IP address of the load balancer deployed in the database tier.  The IP address assigned here must be a valid IP address within the subnet identified within 'deploymentDBaseSubnet'."
       }
     },
     "proxyVMSize": {
