@@ -122,7 +122,7 @@
 
   },
   "variables": {
-    "namePrefix": "[toLower(parameters('resourceNamePrefix')]",
+    "namePrefix": "[toLower(parameters('resourceNamePrefix'))]",
     "storageAccountName": "[concat(variables('namePrefix'),'sa', uniqueString(resourceGroup().id))]",
     "vnetID": "[resourceId(parameters('deploymentVNETResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('deploymentVNET'))]",
     "subnetProxyRef": "[concat(variables('vnetID'),'/subnets/', parameters('deploymentProxySubnet'))]",
