@@ -73,7 +73,6 @@
     },
     "proxyVMCount": {
       "type": "int",
-      "minValue": 2,
       "defaultValue": 2
     },
     "webVMSize": {

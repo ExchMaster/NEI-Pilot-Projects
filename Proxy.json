@@ -18,9 +18,7 @@
       "type": "string"
     },
     "proxyVMCount": {
-      "type": "int",
-      "minValue": 2,
-      "defaultValue": 2
+      "type": "int"
     },
     "deploymentVNETID": {
       "type": "string"
