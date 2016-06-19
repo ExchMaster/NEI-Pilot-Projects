@@ -1,53 +1,137 @@
 ﻿{
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {
-        "resourceNamePrefix": {
-          "type": "string",
-          "minLength": 2,
-          "maxLength": 5,
-          "defaultValue": "NEI"
-        },
-        "adminUsername": {
-          "type": "string",
-          "metadata": {
-            "description": "This will be the name of the local system root user.  The value for this field cannot be 'root', 'admin', or 'administrator'."
-          }
-        },
-      "adminPassword": {
-        "type": "securestring",
-        "metadata": {
-          "description": "This will be the default passwrod of the local system root user.  Must be 12 characters in length, use upper and lower case characters, and at least one special character.  Most passwords derived from the word 'password' are blocked automatically and will cause the deployment to fail."
-        }
-      },
-      "proxyVMSize": {
-        "type": "string",
-        "defaultValue": "Standard_A6",
-        "allowedValues": [
-          "Standard_A1",
-          "Standard_A2",
-          "Standard_A3",
-          "Standard_A4",
-          "Standard_A5",
-          "Standard_A6",
-          "Standard_A7"
-        ],
-        "metadata": {
-          "description": "The default value deploys a Standard_A6 VM utilizing 4 x CPU cores and 28 GB of RAM.  The full list of virtual machine sizes are avaliable at the following link: https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-sizes/"
-        }
-      },
-      "proxyVMCount": {
-        "type": "int",
-        "minValue": 2,
-        "defaultValue": 2
-      }
-
+  "parameters": {
+    "resourceNamePrefix": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 5,
+      "defaultValue": "NEI"
     },
+    "adminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "This will be the name of the local system root user.  The value for this field cannot be 'root', 'admin', or 'administrator'."
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "This will be the default passwrod of the local system root user.  Must be 12 characters in length, use upper and lower case characters, and at least one special character.  Most passwords derived from the word 'password' are blocked automatically and will cause the deployment to fail."
+      }
+    },
+    "deploymentVNET": {
+      "type": "string",
+      "defaultValue": "NEIVNET",
+      "metadata": {
+        "description": "The pre-existing virtual network where all virtual machines will be deployed."
+      }
+    },
+    "deploymentVNETResourceGroup": {
+      "type": "string",
+      "defaultValue": "depVNETResGroup",
+      "metadata": {
+        "description": "The pre-existing resource group name that contains the virtual network defined by 'deploymentVNET'."
+      }
+    },
+    "deploymentProxySubnet": {
+      "type": "string",
+      "defaultValue": "Proxy",
+      "metadata": {
+        "description": "The pre-existing subnet name within the virtual network defined by 'deploymentVNET' which will contain the proxy tier of this web application."
+      }
+    },
+    "deploymentWebSubnet": {
+      "type": "string",
+      "defaultValue": "Web",
+      "metadata": {
+        "description": "The pre-existing subnet name within the virtual network defined by 'deploymentVNET' which will contain the web tier of this web application."
+      }
+    },
+    "deploymentDBaseSubnet": {
+      "type": "string",
+      "defaultValue": "Dbase",
+      "metadata": {
+        "description": "The pre-existing subnet name within the virtual network defined by 'deploymentVNET' which will contain the dbase tier of this web application."
+      }
+    },
+    "proxyVMSize": {
+      "type": "string",
+      "defaultValue": "Standard_A6",
+      "allowedValues": [
+        "Standard_A1",
+        "Standard_A2",
+        "Standard_A3",
+        "Standard_A4",
+        "Standard_A5",
+        "Standard_A6",
+        "Standard_A7"
+      ],
+      "metadata": {
+        "description": "The default value deploys a Standard_A6 VM utilizing 4 x CPU cores and 28 GB of RAM.  The full list of virtual machine sizes are avaliable at the following link: https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-sizes/"
+      }
+    },
+    "proxyVMCount": {
+      "type": "int",
+      "minValue": 2,
+      "defaultValue": 2
+    },
+    "webVMSize": {
+      "type": "string",
+      "defaultValue": "Standard_A6",
+      "allowedValues": [
+        "Standard_A1",
+        "Standard_A2",
+        "Standard_A3",
+        "Standard_A4",
+        "Standard_A5",
+        "Standard_A6",
+        "Standard_A7"
+      ],
+      "metadata": {
+        "description": "The default value deploys a Standard_A6 VM utilizing 4 x CPU cores and 28 GB of RAM.  The full list of virtual machine sizes are avaliable at the following link: https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-sizes/"
+      }
+    },
+    "webVMCount": {
+      "type": "int",
+      "minValue": 2,
+      "defaultValue": 2
+    },
+    "dbaseVMSize": {
+      "type": "string",
+      "defaultValue": "Standard_A6",
+      "allowedValues": [
+        "Standard_A1",
+        "Standard_A2",
+        "Standard_A3",
+        "Standard_A4",
+        "Standard_A5",
+        "Standard_A6",
+        "Standard_A7"
+      ],
+      "metadata": {
+        "description": "The default value deploys a Standard_A6 VM utilizing 4 x CPU cores and 28 GB of RAM.  The full list of virtual machine sizes are avaliable at the following link: https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-sizes/"
+      }
+    },
+    "dbaseVMCount": {
+      "type": "int",
+      "minValue": 2,
+      "defaultValue": 2
+    }
+
+
+  },
   "variables": {
     "namePrefix": "[toLower(parameters('resourceNamePrefix')]",
     "storageAccountName": "[concat(variables('namePrefix'),'sa', uniqueString(resourceGroup().id))]",
-    "ProxyTemplateFilePath": "NEI-Pilot-Projects/Templates/Proxy.json",
-    "ProxyTemplateParametersFilePath": "NEI-Pilot-Projects/Templates/Proxy.parameters.json"
+    "vnetID": "[resourceId(parameters('deploymentVNETResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('deploymentVNET'))]",
+    "subnetProxyRef": "[concat(variables('vnetID'),'/subnets/', parameters('deploymentProxySubnet'))]",
+    "subnetWebRef": "[concat(variables('vnetID'),'/subnets/', parameters('deploymentWebSubnet'))]",
+    "subnetDbaseRef": "[concat(variables('vnetID'),'/subnets/', parameters('deploymentDBaseSubnet'))]",
+    "baseTemplateURI": "https://raw.githubusercontent.com/ExchMaster/NEI-Pilot-Projects/master/",
+    "proxyTemplateFilePath": "Proxy.json",
+    "webTemplateFilePath": "Web.json",
+    "dbaseTemplateFilePath": "Dbase.json"
   },
     "resources": [
         {
@@ -65,18 +149,40 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2015-01-01",
           "dependsOn": [
-
+            "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
           ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('_artifactsLocation'), '/', variables('ProxyTemplateFilePath'), parameters('_artifactsLocationSasToken'))]",
+                    "uri": "[concat(variables('baseTemplateURI'), '/', variables('proxyTemplateFilePath'))]",
                     "contentVersion": "1.0.0.0"
                 },
-                "parametersLink": {
-                    "uri": "[concat(parameters('_artifactsLocation'), '/', variables('ProxyTemplateParametersFilePath'), parameters('_artifactsLocationSasToken'))]",
-                    "contentVersion": "1.0.0.0"
+              "parameters": {
+                "adminUsername": {
+                  "value": "[parameters('adminUsername')]"
+                },
+                "adminPassword": {
+                  "value": "[parameters('adminPassword')]"
+                },
+                "storageAccountName": {
+                  "value": "[variables('storageAccountName')]"
+                },
+                "resourceNamePrefix": {
+                  "value": "[variables('namePrefix')]"
+                },
+                "proxyVMSize": {
+                  "value": "[parameters('proxyVMSize')]"
+                },
+                "proxyVMCount": {
+                  "value": "[parameters('proxyVMCount')"
+                },
+                "deploymentVNETID": {
+                  "value": "[variables('vnetID')"
+                },
+                "subnetProxyRef": {
+                  "value": "[variables('subnetProxyRef')"
                 }
+              }
             }
         }
     ],

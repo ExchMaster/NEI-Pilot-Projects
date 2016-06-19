@@ -1,11 +1,106 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {
+  "parameters": {
+    "adminUsername": {
+      "type": "string"
     },
-    "variables": {
+    "adminPassword": {
+      "type": "securestring"
     },
+    "storageAccountName": {
+      "type": "string"
+    },
+    "resourceNamePrefix": {
+      "type": "string"
+    },
+    "proxyVMSize": {
+      "type": "string"
+    },
+    "proxyVMCount": {
+      "type": "int"
+    },
+    "deploymentVNETID": {
+      "type": "string"
+    },
+    "subnetProxyRef": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "nicName": "[concat(parameters('resourceNamePrefix'),'nic', uniqueString(resourceGroup().id))]",
+    "vmName": "[concat(parameters('resourceNamePrefix'),'vm')]"
+  },
     "resources": [
+        {
+          "name": "[concat(variables('nicName'),copyIndex())]",
+          "type": "Microsoft.Network/networkInterfaces",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2015-06-15",
+          "copy": {
+            "name": "nicNameLoop",
+            "count": "[parameters('proxyVMCount')]"
+          },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[parameters('subnetProxyRef')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+          "name": "[concat(variables('vmName'),copyIndex())]",
+          "type": "Microsoft.Compute/virtualMachines",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2015-06-15",
+          "copy": {
+            "name": "vmNameLoop",
+            "count": "[parameters('proxyVMCount')]"
+          },
+          "dependsOn": [
+            "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'),copyIndex())]"
+          ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('proxyVMSize')]"
+                },
+              "osProfile": {
+                "computerName": "[concat(variables('vmName'),copyIndex())]",
+                "adminUsername": "[parameters('adminUsername')]",
+                "adminPassword": "[parameters('adminPassword')]"
+              },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "OpenLogic",
+                        "offer": "CentOS",
+                        "sku": "7.2",
+                        "version": "latest"
+                    },
+                  "osDisk": {
+                    "name": "[concat(variables('vmName'),copyIndex(),'osdisk')]",
+                    "vhd": {
+                      "uri": "[concat('http://', parameters('storageAccountName'), '.blob.core.windows.net/', parameters('resourceNamePrefix'), '/', variables('vmName'),copyIndex(), 'osdisk.vhd')]"
+                    },
+                    "caching": "ReadWrite",
+                    "createOption": "FromImage"
+                  }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('nicName'),copyIndex()))]"
+                        }
+                    ]
+                }
+            }
+        }
     ],
     "outputs": {
     }
