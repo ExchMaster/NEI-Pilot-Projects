@@ -25,15 +25,7 @@
     },
     "subnetProxyRef": {
       "type": "string"
-    },
-      "tempasnameName": {
-          "type": "string",
-          "minLength": 1
-      },
-      "temppipnameDnsName": {
-          "type": "string",
-          "minLength": 1
-      }
+    }
   },
   "variables": {
     "nicName": "[concat(parameters('resourceNamePrefix'),'nicp', uniqueString(resourceGroup().id))]",
