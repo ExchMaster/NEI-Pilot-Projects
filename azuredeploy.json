@@ -169,7 +169,7 @@
         "mode": "Incremental",
         "templateLink": {
           "uri": "[concat(variables('baseTemplateURI'), variables('proxyTemplateFilePath'))]",
-          "contentVersion": "1.0.0.0"
+          "contentVersion": "1.0.0.1"
         },
         "parameters": {
           "adminUsername": {
@@ -210,7 +210,7 @@
         "mode": "Incremental",
         "templateLink": {
           "uri": "[concat(variables('baseTemplateURI'), variables('webTemplateFilePath'))]",
-          "contentVersion": "1.0.0.0"
+          "contentVersion": "1.0.0.1"
         },
         "parameters": {
           "adminUsername": {
@@ -254,7 +254,7 @@
         "mode": "Incremental",
         "templateLink": {
           "uri": "[concat(variables('baseTemplateURI'), variables('dbaseTemplateFilePath'))]",
-          "contentVersion": "1.0.0.0"
+          "contentVersion": "1.0.0.1"
         },
         "parameters": {
           "adminUsername": {
