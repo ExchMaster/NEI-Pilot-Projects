@@ -73,6 +73,7 @@
     },
     "proxyVMCount": {
       "type": "int",
+      "minValue": 2,
       "defaultValue": 2
     },
     "webVMSize": {
@@ -173,13 +174,13 @@
                   "value": "[parameters('proxyVMSize')]"
                 },
                 "proxyVMCount": {
-                  "value": "[parameters('proxyVMCount')"
+                  "value": "[parameters('proxyVMCount')]"
                 },
                 "deploymentVNETID": {
-                  "value": "[variables('vnetID')"
+                  "value": "[variables('vnetID')]"
                 },
                 "subnetProxyRef": {
-                  "value": "[variables('subnetProxyRef')"
+                  "value": "[variables('subnetProxyRef')]"
                 }
               }
             }

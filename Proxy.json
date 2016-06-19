@@ -25,83 +25,204 @@
     },
     "subnetProxyRef": {
       "type": "string"
-    }
+    },
+      "tempasnameName": {
+          "type": "string",
+          "minLength": 1
+      },
+      "temppipnameDnsName": {
+          "type": "string",
+          "minLength": 1
+      }
   },
   "variables": {
-    "nicName": "[concat(parameters('resourceNamePrefix'),'nic', uniqueString(resourceGroup().id))]",
-    "vmName": "[concat(parameters('resourceNamePrefix'),'vm')]"
+    "nicName": "[concat(parameters('resourceNamePrefix'),'nicp', uniqueString(resourceGroup().id))]",
+    "vmName": "[concat(parameters('resourceNamePrefix'),'vmp')]",
+    "lbName": "[concat(parameters('resourceNamePrefix'),'lbp', uniqueString(resourceGroup().id))]",
+    "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbName'))]",
+    "availabilitySetName": "[concat(parameters('resourceNamePrefix'),'asp', uniqueString(resourceGroup().id))]",
+    "pipName": "[concat(parameters('resourceNamePrefix'),'pip')]",
+    "pipID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('pipName'))]"
   },
-    "resources": [
-        {
-          "name": "[concat(variables('nicName'),copyIndex())]",
-          "type": "Microsoft.Network/networkInterfaces",
-          "location": "[resourceGroup().location]",
-          "apiVersion": "2015-06-15",
-          "copy": {
-            "name": "nicNameLoop",
-            "count": "[parameters('proxyVMCount')]"
-          },
+  "resources": [
+    {
+      "name": "[concat(variables('nicName'),copyIndex())]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "copy": {
+        "name": "nicNameLoop",
+        "count": "[parameters('proxyVMCount')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/loadBalancers/', variables('lbName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
             "properties": {
-                "ipConfigurations": [
-                    {
-                        "name": "ipconfig1",
-                        "properties": {
-                            "privateIPAllocationMethod": "Dynamic",
-                            "subnet": {
-                                "id": "[parameters('subnetProxyRef')]"
-                            }
-                        }
-                    }
-                ]
-            }
-        },
-        {
-          "name": "[concat(variables('vmName'),copyIndex())]",
-          "type": "Microsoft.Compute/virtualMachines",
-          "location": "[resourceGroup().location]",
-          "apiVersion": "2015-06-15",
-          "copy": {
-            "name": "vmNameLoop",
-            "count": "[parameters('proxyVMCount')]"
-          },
-          "dependsOn": [
-            "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'),copyIndex())]"
-          ],
-            "properties": {
-                "hardwareProfile": {
-                    "vmSize": "[parameters('proxyVMSize')]"
-                },
-              "osProfile": {
-                "computerName": "[concat(variables('vmName'),copyIndex())]",
-                "adminUsername": "[parameters('adminUsername')]",
-                "adminPassword": "[parameters('adminPassword')]"
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('subnetProxyRef')]"
               },
-                "storageProfile": {
-                    "imageReference": {
-                        "publisher": "OpenLogic",
-                        "offer": "CentOS",
-                        "sku": "7.2",
-                        "version": "latest"
-                    },
-                  "osDisk": {
-                    "name": "[concat(variables('vmName'),copyIndex(),'osdisk')]",
-                    "vhd": {
-                      "uri": "[concat('http://', parameters('storageAccountName'), '.blob.core.windows.net/', parameters('resourceNamePrefix'), '/', variables('vmName'),copyIndex(), 'osdisk.vhd')]"
-                    },
-                    "caching": "ReadWrite",
-                    "createOption": "FromImage"
-                  }
-                },
-                "networkProfile": {
-                    "networkInterfaces": [
-                        {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('nicName'),copyIndex()))]"
-                        }
-                    ]
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[concat(variables('lbID'), '/backendAddressPools/LoadBalancerBackend')]"
                 }
+              ]
             }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[concat(variables('vmName'),copyIndex())]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "copy": {
+        "name": "vmNameLoop",
+        "count": "[parameters('proxyVMCount')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'),copyIndex())]",
+        "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('proxyVMSize')]"
+        },
+        "osProfile": {
+          "computerName": "[concat(variables('vmName'),copyIndex())]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "OpenLogic",
+            "offer": "CentOS",
+            "sku": "7.2",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[concat(variables('vmName'),copyIndex(),'osdisk')]",
+            "vhd": {
+              "uri": "[concat('http://', parameters('storageAccountName'), '.blob.core.windows.net/', parameters('resourceNamePrefix'), '/', variables('vmName'),copyIndex(), 'osdisk.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('nicName'),copyIndex()))]"
+            }
+          ]
+        },
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
         }
-    ],
+      }
+    },
+    {
+      "name": "[variables('availabilitySetName')]",
+      "type": "Microsoft.Compute/availabilitySets",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [ ],
+      "properties": {
+        "platformUpdateDomainCount": 2,
+        "platformFaultDomainCount": 2
+      }
+    },
+    {
+      "name": "[variables('pipName')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [ ],
+      "properties": {
+        "publicIPAllocationMethod": "Static"
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "name": "[variables('lbName')]",
+      "type": "Microsoft.Network/loadBalancers",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('pipName'))]"
+      ],
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "LoadBalancerFrontend",
+            "properties": {
+              "publicIPAddress": {
+                "id": "[variables('pipID')]"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "LoadBalancerBackend"
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', 'loadBalancer'), '/frontendIpConfigurations/LoadBalancerFrontend')]"
+              },
+              "backendAddressPool": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', 'loadBalancer'), '/backendAddressPools/LoadBalancerBackend')]"
+              },
+              "probe": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', 'loadBalancer'), '/probes/lbprobe')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 80,
+              "backendPort": 80,
+              "idleTimeoutInMinutes": 4
+            },
+            "name": "http80"
+          },
+          {
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', 'loadBalancer'), '/frontendIpConfigurations/LoadBalancerFrontend')]"
+              },
+              "backendAddressPool": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', 'loadBalancer'), '/backendAddressPools/LoadBalancerBackend')]"
+              },
+              "probe": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', 'loadBalancer'), '/probes/lbprobe')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 443,
+              "backendPort": 443,
+              "idleTimeoutInMinutes": 4
+            },
+            "name": "https443"
+          }
+        ],
+        "probes": [
+          {
+            "properties": {
+              "protocol": "Tcp",
+              "port": 80,
+              "intervalInSeconds": 6,
+              "numberOfProbes": 2
+            },
+            "name": "lbprobe"
+          }
+        ]
+      }
+    }
+  ],
     "outputs": {
     }
 }
