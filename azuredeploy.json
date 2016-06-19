@@ -143,9 +143,9 @@
     "subnetWebRef": "[concat(variables('vnetID'),'/subnets/', parameters('deploymentWebSubnet'))]",
     "subnetDbaseRef": "[concat(variables('vnetID'),'/subnets/', parameters('deploymentDBaseSubnet'))]",
     "baseTemplateURI": "https://raw.githubusercontent.com/ExchMaster/NEI-Pilot-Projects/master/",
-    "proxyTemplateFilePath": "Proxy.json",
-    "webTemplateFilePath": "Web.json",
-    "dbaseTemplateFilePath": "Dbase.json"
+    "proxyTemplateFilePath": "proxy.json",
+    "webTemplateFilePath": "web.json",
+    "dbaseTemplateFilePath": "dbase.json"
   },
   "resources": [
     {
@@ -168,7 +168,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('baseTemplateURI'), '/', variables('proxyTemplateFilePath'))]",
+          "uri": "[concat(variables('baseTemplateURI'), variables('proxyTemplateFilePath'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -209,7 +209,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('baseTemplateURI'), '/', variables('webTemplateFilePath'))]",
+          "uri": "[concat(variables('baseTemplateURI'), variables('webTemplateFilePath'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -253,7 +253,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('baseTemplateURI'), '/', variables('dbaseTemplateFilePath'))]",
+          "uri": "[concat(variables('baseTemplateURI'), variables('dbaseTemplateFilePath'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
