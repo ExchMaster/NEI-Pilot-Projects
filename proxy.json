@@ -111,7 +111,7 @@
               "diskSizeGB": "1023",
               "lun": 0,
               "vhd": {
-                "uri": "[concat('http://', parameters('storageAccountName'), '.blob.core.windows.net/', parameters('resourceNamePrefix'), '/', variables('vmName'),copyIndex(), '/lindatadisk0.vhd')]"
+                "uri": "[concat('http://', parameters('storageAccountName'), '.blob.core.windows.net/', parameters('resourceNamePrefix'), '/', variables('vmName'),copyIndex(), 'datadisk0.vhd')]"
               },
               "caching": "None",
               "createOption": "Empty"
@@ -121,7 +121,7 @@
               "diskSizeGB": "1023",
               "lun": 1,
               "vhd": {
-                "uri": "[concat('http://', parameters('storageAccountName'), '.blob.core.windows.net/', parameters('resourceNamePrefix'), '/', variables('vmName'),copyIndex(), '/lindatadisk1.vhd')]"
+                "uri": "[concat('http://', parameters('storageAccountName'), '.blob.core.windows.net/', parameters('resourceNamePrefix'), '/', variables('vmName'),copyIndex(), 'datadisk1.vhd')]"
               },
               "caching": "None",
               "createOption": "Empty"
