@@ -25,19 +25,7 @@
     },
     "subnetProxyRef": {
       "type": "string"
-    },
-      "_artifactsLocation": {
-          "type": "string",
-          "metadata": {
-              "description": "Auto-generated container in staging storage account to receive post-build staging folder upload"
-          }
-      },
-      "_artifactsLocationSasToken": {
-          "type": "securestring",
-          "metadata": {
-              "description": "Auto-generated token to access _artifactsLocation"
-          }
-      }
+    }
   },
   "variables": {
     "nicName": "[concat(parameters('resourceNamePrefix'),'nicp', uniqueString(resourceGroup().id))]",
@@ -46,9 +34,7 @@
     "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbName'))]",
     "availabilitySetName": "[concat(parameters('resourceNamePrefix'),'asp', uniqueString(resourceGroup().id))]",
     "pipName": "[concat(parameters('resourceNamePrefix'),'pip')]",
-    "pipID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('pipName'))]",
-      "templinuxextensionScriptFileName": "templinuxextension.sh",
-      "templinuxextensionScriptFilePath": "[concat('NEI-Pilot-Projects/CustomScripts/', variables('templinuxextensionScriptFileName'))]"
+    "pipID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('pipName'))]"
   },
   "resources": [
     {
