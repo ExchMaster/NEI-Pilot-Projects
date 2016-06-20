@@ -155,14 +155,10 @@
       },
         "resources": [
           {
-            "name": "[concat(variables('vmName'),copyIndex())]",
+            "name": "configStorage",
             "type": "extensions",
             "location": "[resourceGroup().location]",
             "apiVersion": "2015-06-15",
-            "copy": {
-              "name": "extCount",
-              "count": "[parameters('proxyVMCount')]"
-            },
             "dependsOn": [
               "[concat('Microsoft.Compute/virtualMachines/', concat(variables('vmName'),copyIndex()))]"
             ],
