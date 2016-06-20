@@ -1,7 +1,7 @@
 #!/bin/bash 
 
 #Updates system and packages to latest revisions
-yum update -y
+#yum update -y
 
 #Creates Raid 0 array on two disks, /dev/sdc & /dev/sdd
 
