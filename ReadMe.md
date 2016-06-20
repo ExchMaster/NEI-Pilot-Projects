@@ -2,7 +2,7 @@
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FExchMaster%2FNEI-Pilot-Projects%2Fmaster%2Fazuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
 
-This template deploys a 3 tier topology for hosting a web application.  Each tier consists of a set of virtual machines running CentOS 7.2, a load balancer, and a subnet.  Please note, when deploying this template it is advisable to deploy into a resource group that is different from the virtual network which will host the infrastructure.  This will allow you to delete the resources without affecting the underlying network.
+This template deploys a 3 tier topology for hosting a web application.  Each tier consists of a set of virtual machines running CentOS 7.2, a load balancer, and a subnet.  Please note, when deploying this template it is advisable to deploy into a resource group that is different from the virtual network which will host the infrastructure.  This will allow you to delete the resources without affecting the underlying network. Also, the Azure region must match between the pre-existing virtual network and the resource group created as part of deployment.  If the virtual network exists in "East US", then the resource group created as part of the deployment of the infrastrcuture must also be in in "East US".  
 
 ##Overview of Tiers
 
@@ -14,9 +14,9 @@ This template deploys a 3 tier topology for hosting a web application.  Each tie
 
 Prior to attempting to deploy this template, please open the virtual network object where you will deploy the template and gather the following:
 
-*Virtual Network Name
-*Virtual Network Resource Group
-*Virtual Network Subnet Names (Map a subnet name to each tier: proxy, web, dbase)
+* Virtual Network Name
+* Virtual Network Resource Group
+* Virtual Network Subnet Names (Map a subnet name to each tier: proxy, web, dbase)
 
 For the subnets which will host the Web and Dbase tiers, please pick an unused IP address from each subnet range.  These two IP addresses will be used for the internal load balances on each respective tier (see below for more details).
 
