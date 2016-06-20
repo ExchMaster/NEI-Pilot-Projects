@@ -88,7 +88,10 @@
     "proxyVMCount": {
       "type": "int",
       "minValue": 2,
-      "defaultValue": 2
+      "defaultValue": 2,
+      "metadata": {
+        "description": "This represents the number of virtual machines to deploy within the Proxy tier.  The virtual machines deployed will be of the size defined by 'proxyVMSize'."
+      }
     },
     "webVMSize": {
       "type": "string",
@@ -109,7 +112,10 @@
     "webVMCount": {
       "type": "int",
       "minValue": 2,
-      "defaultValue": 2
+      "defaultValue": 2,
+      "metadata": {
+        "description": "This represents the number of virtual machines to deploy within the Web tier.  The virtual machines deployed will be of the size defined by 'webVMSize'."
+      }
     },
     "dbaseVMSize": {
       "type": "string",
@@ -130,7 +136,10 @@
     "dbaseVMCount": {
       "type": "int",
       "minValue": 2,
-      "defaultValue": 2
+      "defaultValue": 2,
+      "metadata": {
+        "description": "This represents the number of virtual machines to deploy within the Dbase tier.  The virtual machines deployed will be of the size defined by 'dbaseVMSize'."
+      }
     }
 
 
