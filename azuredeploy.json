@@ -5,7 +5,7 @@
     "resourceNamePrefix": {
       "type": "string",
       "minLength": 2,
-      "maxLength": 5,
+      "maxLength": 8,
       "defaultValue": "NEI"
     },
     "adminUsername": {
@@ -48,18 +48,18 @@
         "description": "The pre-existing subnet name within the virtual network defined by 'deploymentVNET' which will contain the web tier of this web application."
       }
     },
-    "webLBPrivateIPAddress": {
-      "type": "string",
-      "defaultValue": "10.8.0.30",
-      "metadata": {
-        "description": "This is the private IP address of the load balancer deployed in the web tier.  The IP address assigned here must be a valid IP address within the subnet identified within 'deploymentWebSubnet'."
-      }
-    },
     "deploymentDBaseSubnet": {
       "type": "string",
       "defaultValue": "Dbase",
       "metadata": {
         "description": "The pre-existing subnet name within the virtual network defined by 'deploymentVNET' which will contain the dbase tier of this web application."
+      }
+    },
+    "webLBPrivateIPAddress": {
+      "type": "string",
+      "defaultValue": "10.8.0.30",
+      "metadata": {
+        "description": "This is the private IP address of the load balancer deployed in the web tier.  The IP address assigned here must be a valid IP address within the subnet identified within 'deploymentWebSubnet'."
       }
     },
     "dbaseLBPrivateIPAddress": {

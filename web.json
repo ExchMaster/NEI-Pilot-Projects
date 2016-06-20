@@ -32,8 +32,8 @@
   },
   "variables": {
     "nicName": "[concat(parameters('resourceNamePrefix'),'nicw', uniqueString(resourceGroup().id))]",
-    "vmName": "[concat(parameters('resourceNamePrefix'),'vmw')]",
-    "lbName": "[concat(parameters('resourceNamePrefix'),'lbw', uniqueString(resourceGroup().id))]",
+    "vmName": "[concat(parameters('resourceNamePrefix'),'vm-web')]",
+    "lbName": "[concat(parameters('resourceNamePrefix'),'lb-web')]",
     "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbName'))]",
     "availabilitySetName": "[concat(parameters('resourceNamePrefix'),'asw', uniqueString(resourceGroup().id))]"
   },
