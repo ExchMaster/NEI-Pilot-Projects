@@ -105,7 +105,29 @@
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
-          }
+          },
+          "dataDisks": [
+            {
+              "name": "datadisk0",
+              "diskSizeGB": "1023",
+              "lun": 0,
+              "vhd": {
+                "uri": "[concat('http://', parameters('storageAccountName'), '.blob.core.windows.net/', parameters('resourceNamePrefix'), '/', variables('vmName'),copyIndex(), 'datadisk0.vhd')]"
+              },
+              "caching": "None",
+              "createOption": "Empty"
+            },
+            {
+              "name": "datadisk1",
+              "diskSizeGB": "1023",
+              "lun": 1,
+              "vhd": {
+                "uri": "[concat('http://', parameters('storageAccountName'), '.blob.core.windows.net/', parameters('resourceNamePrefix'), '/', variables('vmName'),copyIndex(), 'datadisk1.vhd')]"
+              },
+              "caching": "None",
+              "createOption": "Empty"
+            }
+          ]
         },
         "networkProfile": {
           "networkInterfaces": [
@@ -117,7 +139,30 @@
         "availabilitySet": {
           "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
         }
-      }
+      },
+      "resources": [
+        {
+          "name": "configStorage",
+          "type": "extensions",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2015-06-15",
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', concat(variables('vmName'),copyIndex()))]"
+          ],
+          "properties": {
+            "publisher": "Microsoft.OSTCExtensions",
+            "type": "CustomScriptForLinux",
+            "typeHandlerVersion": "1.4",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "fileUris": [
+                "https://raw.githubusercontent.com/ExchMaster/NEI-Pilot-Projects/master/configstorv2.sh"
+              ],
+              "commandToExecute": "sh configstorv2.sh"
+            }
+          }
+        }
+      ]
     },
     {
       "name": "[variables('availabilitySetName')]",
