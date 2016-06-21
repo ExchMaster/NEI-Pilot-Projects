@@ -29,49 +29,49 @@
     },
     "deploymentVNETResourceGroup": {
       "type": "string",
-      "defaultValue": "depVNETResGroup",
+      "defaultValue": "NEI",
       "metadata": {
         "description": "The pre-existing resource group name that contains the virtual network defined by 'deploymentVNET'."
       }
     },
     "deploymentProxySubnet": {
       "type": "string",
-      "defaultValue": "Proxy",
+      "defaultValue": "NEIVNETSUB",
       "metadata": {
         "description": "The pre-existing subnet name within the virtual network defined by 'deploymentVNET' which will contain the proxy tier of this web application."
       }
     },
     "deploymentWebSubnet": {
       "type": "string",
-      "defaultValue": "Web",
+      "defaultValue": "NEIVNETSUB",
       "metadata": {
         "description": "The pre-existing subnet name within the virtual network defined by 'deploymentVNET' which will contain the web tier of this web application."
       }
     },
     "deploymentDBaseSubnet": {
       "type": "string",
-      "defaultValue": "Dbase",
+      "defaultValue": "NEIVNETSUB",
       "metadata": {
         "description": "The pre-existing subnet name within the virtual network defined by 'deploymentVNET' which will contain the dbase tier of this web application."
       }
     },
     "webLBPrivateIPAddress": {
       "type": "string",
-      "defaultValue": "10.8.0.30",
+      "defaultValue": "10.253.72.61",
       "metadata": {
         "description": "This is the private IP address of the load balancer deployed in the web tier.  The IP address assigned here must be a valid IP address within the subnet identified within 'deploymentWebSubnet'."
       }
     },
     "dbaseLBPrivateIPAddress": {
       "type": "string",
-      "defaultValue": "10.8.0.46",
+      "defaultValue": "10.253.72.62",
       "metadata": {
         "description": "This is the private IP address of the load balancer deployed in the database tier.  The IP address assigned here must be a valid IP address within the subnet identified within 'deploymentDBaseSubnet'."
       }
     },
     "proxyVMSize": {
       "type": "string",
-      "defaultValue": "Standard_A6",
+      "defaultValue": "Standard_A3",
       "allowedValues": [
         "Standard_A1",
         "Standard_A2",
@@ -82,7 +82,7 @@
         "Standard_A7"
       ],
       "metadata": {
-        "description": "The default value deploys a Standard_A6 VM utilizing 4 x CPU cores and 28 GB of RAM.  The full list of virtual machine sizes are avaliable at the following link: https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-sizes/"
+        "description": "The default value deploys a Standard_A3 VM utilizing 4 x CPU cores and 7 GB of RAM.  The full list of virtual machine sizes are avaliable at the following link: https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-sizes/"
       }
     },
     "proxyVMCount": {
@@ -95,7 +95,7 @@
     },
     "webVMSize": {
       "type": "string",
-      "defaultValue": "Standard_A6",
+      "defaultValue": "Standard_A3",
       "allowedValues": [
         "Standard_A1",
         "Standard_A2",
@@ -106,7 +106,7 @@
         "Standard_A7"
       ],
       "metadata": {
-        "description": "The default value deploys a Standard_A6 VM utilizing 4 x CPU cores and 28 GB of RAM.  The full list of virtual machine sizes are avaliable at the following link: https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-sizes/"
+        "description": "The default value deploys a Standard_A6 VM utilizing 4 x CPU cores and 7 GB of RAM.  The full list of virtual machine sizes are avaliable at the following link: https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-windows-sizes/"
       }
     },
     "webVMCount": {
