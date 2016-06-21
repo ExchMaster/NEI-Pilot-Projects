@@ -14,7 +14,7 @@ mdadm --create /dev/md127 --level 0 --raid-devices 2 /dev/sdc /dev/sdd
 #parted /dev/md127 --script mkpart primary 0% 100%
 
 #Formates partition using XFS
-mkfs.xfs /dev/md127
+mkfs.xfs /dev/md127 -f
 
 #Creates mount point and updates fstab so mount point persists during reboots, automatically mounts volumes for current session
 mkdir -p /data
