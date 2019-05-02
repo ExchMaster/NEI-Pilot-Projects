@@ -1,16 +1,16 @@
-#NEI Pilot Project - Web Application
+# NEI Pilot Project - Web Application
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FExchMaster%2FNEI-Pilot-Projects%2Fmaster%2Fazuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
 
 This template deploys a 3 tier topology for hosting a web application.  Each tier consists of a set of virtual machines running CentOS 7.2, a load balancer, and a subnet.  Please note, when deploying this template it is advisable to deploy into a resource group that is different from the virtual network which will host the infrastructure.  This will allow you to delete the resources without affecting the underlying network. Also, the Azure region must match between the pre-existing virtual network and the resource group created as part of deployment.  If the virtual network exists in "East US", then the resource group created as part of the deployment of the infrastrcuture must also be in in "East US".  
 
-##Overview of Tiers
+## Overview of Tiers
 
 * __Proxy__:  This tier hosts the public facing load balancer and the proxy virtual machines.  Incoming TCP port 80 & 443 are load balanced between the proxy systems with health checking occurring at the TCP level.  SSL termination and traffic inspection will occur at this tier and assuming that the traffic passes all hygiene tests, will be forwarded to the Web tier load balancer for further processing.
 * __Web__:  This tier hosts an internal load balancer which receives approved traffic from the Proxy tier.  The Web tier load balancer load balances port 80 and 443 across the Web virtual machines in this tier.  
 * __Dbase__:  This tier hosts an internal load balancer which receives traffic from the Web tier.  The Dbase tier load balancer load balances port 3306 (the default TCP port for MariaDB/MySQL) across the Dbase virtual machines hosting the databases required to support the Web tier.
 
-##Pre-requisites for Deployment
+## Pre-requisites for Deployment
 
 Prior to attempting to deploy this template, please open the virtual network object where you will deploy the template and gather the following:
 
@@ -20,7 +20,7 @@ Prior to attempting to deploy this template, please open the virtual network obj
 
 For the subnets which will host the Web and Dbase tiers, please pick an unused IP address from each subnet range.  These two IP addresses will be used for the internal load balances on each respective tier (see below for more details).
 
-##Deployment Parameters
+## Deployment Parameters
 
 To deploy this template, please click "Deploy to Azure" shown above.  Once you click to deploy, you will be presented with a list of parameters which must be filled out properly to ensure the solution can deploy successfully.  Shown below are the parameters and the information needed to fill each out successfully.
 
